@@ -1,0 +1,19 @@
+
+messages:
+  details: "{title}"
+  subDetails: "By {artist}"
+  listen: Listen
+
+
+RPC:
+  clientId: "657893063875624961"
+  token: env
+  uploadImage: false
+  defaultImage: default
+  showArtist: true
+  showListenButton: true
+
+soundcloud:
+  clientId: auto
+advanced :
+  port : 7769

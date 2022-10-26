@@ -1,11 +1,13 @@
 <img src="assets/default.png?raw=true" width="128" height="128" align="left">
+<h1>I'm trying to rewrite it, but it is not done use at your own risk</h1>
+
 <h1>Soundcloud Rich Presence</h1>
 Adds Discord Rich Presence support to Soundcloud.
 <br><br>
 
 ## Introduction
 
-Soundcloud Rich Presence allows you to show off your Soundcloud listening session to your friends using Discord Rich Presence. 
+Soundcloud Rich Presence allows you to show off your Soundcloud listening session to your friends using Discord Rich Presence.
 
 It is a combination of a server, communicating with discord itself, and a user-script, running on your browser to send playback information to the server. Sadly, due to restrictions in the rich presence protocol, it is mandatory to run both the server and the user-script in order for the system to work.
 

@@ -9,19 +9,19 @@
 // ==/UserScript==
 
 (function(){
-  function load_script() {
-    var head = document.getElementsByTagName('head')[0];
-    var script = document.createElement('script');
-    script.id = 'soundcloud-rp-client';
-    var match = document.getElementById(script.id);
-    if (match)
-      match.remove();
-    script.type = 'text/javascript';
-    script.src = 'http://127.0.0.1:7769/client.js';
-    script.onerror = function(){
-      setTimeout(load_script, 10 * 1000);
-    };
-    head.appendChild(script);
-  }
-  load_script();
+	function load_script() {
+		var head = document.getElementsByTagName("head")[0];
+		var script = document.createElement("script");
+		script.id = "soundcloud-rp-client";
+		var match = document.getElementById(script.id);
+		if (match)
+			match.remove();
+		script.type = "text/javascript";
+		script.src = "http://127.0.0.1:7769/client.js";
+		script.onerror = function(){
+			setTimeout(load_script, 10 * 1000);
+		};
+		head.appendChild(script);
+	}
+	load_script();
 })();
