@@ -49,6 +49,7 @@ module.exports = activityEvent => {
 				largeImageKey: await image.getTitleArtwork(act.url)/*"track_864190654"*/,
 				largeImageText: act.title,
 				instance: true,
+				url: act.url
 			};
 			if (global.config.RPC.showListenButton === true){
 				data["buttons"] = [

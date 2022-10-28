@@ -48,7 +48,7 @@ function getB64Image(url, info){
 				buffers.push(chunk);
 			}
 
-			const body = "data:" + res.headers["content-type"] + ";" + Buffer.concat(buffers).toString("base64");
+			const body = "data:" + res.headers["content-type"] + ";base64," + Buffer.concat(buffers).toString("base64");
 			cache[url] = body;
 			return resolve (body);
 		}).on("error", err => {
@@ -58,15 +58,15 @@ function getB64Image(url, info){
 }
 let coversCache = {};
 function getCovers(url){
-	return new Promise((res, rej) => {
+	return new Promise((res) => {
 		if (coversCache[url]) return res(coversCache[url]);
 		getData(url)
-			.then(data => {
+			.then(async data => {
 				const artistCoverURL = data.user.avatar_url;
 				const titleCoverURL = data.artwork_url;
 
-				const artisteCoverB64 = getB64Image(artistCoverURL, "Getting the artist image url : " + artistCoverURL).catch(err =>{console.error((new Date()).toLocaleTimeString(), err); return undefined;});
-				const titleCoverB64 = getB64Image(titleCoverURL, "Getting the track cover url : " + titleCoverURL).catch(err =>{console.error((new Date()).toLocaleTimeString(), err); return undefined;});
+				const artisteCoverB64 = await getB64Image(artistCoverURL, "Getting the artist image url : " + artistCoverURL).catch(err =>{console.error((new Date()).toLocaleTimeString(), err); return undefined;});
+				const titleCoverB64 = await getB64Image(titleCoverURL, "Getting the track cover url : " + titleCoverURL).catch(err =>{console.error((new Date()).toLocaleTimeString(), err); return undefined;});
 
 				const ret = {
 					artist: {
@@ -83,7 +83,8 @@ function getCovers(url){
 
 			})
 			.catch(err => {
-				return rej(err);
+				console.error((new Date()).toLocaleTimeString(), err);
+				return res({artist: {name: "default", b64: undefined}, title: {name: "default", b64: undefined}});
 			});
 	});
 }
