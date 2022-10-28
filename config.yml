@@ -8,7 +8,7 @@ messages:
 RPC:
   clientId: "657893063875624961"
   token: env
-  uploadImage: false
+  artworkUpload: false
   defaultImage: default
   showArtist: true
   showListenButton: true

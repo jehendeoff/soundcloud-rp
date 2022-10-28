@@ -1,10 +1,10 @@
 const sc = require("./soundcloud");
 const discord = require("./discordHTTPrequest");
 
-const canUpload = global.config.RPC.clientId !== "657893063875624961" && global.config.RPC.token !== "" || global.config.forceImage === true;
+const canUpload = global.configParsed.canUpload;
 if (!canUpload) console.warn((new Date()).toLocaleTimeString(), "We detected that we can't upload pictures to discord, resolving to using default ones.");
 
-const scIdAvailable = ()=> global.config.soundcloud.clientId !== "auto";
+const scIdAvailable = ()=> global.config.soundcloud.clientId !== "auto" || global.config.soundcloud.clienId === "none";
 
 
 module.exports = {

@@ -2,42 +2,55 @@ const https = require("https");
 const maxAsset = 150;
 const maxInDiscordAssets = 135;
 const recentId = 20;
+
+const canUpload = global.configParsed.canUpload;
+
 let cache = [];
 let uploaded = [];
 let isWorking = {get : false, upload: false};
 
+var events = require("events");
+
+const GetCacheEvent = new events.EventEmitter();
+
 function getAssets(){
 	return new Promise((resolve, reject) => {
 		if (cache.length !== 0) return resolve(cache);
-		if (isWorking.get === true) return resolve([]);
-		isWorking.get = true;
-		const httpsreq = https.request({
-			method: "get",
-			host: "discord.com",
-			path: `/api/v9/oauth2/applications/${global.config.RPC.clientId}/assets`,
-			port: 443,
-			headers: {
-				authorization: global.config.RPC.token
-			}
-		}, async res => {
-			isWorking.get = false;
-			if (res.statusCode !== 200) return reject(res.statusMessage);
-			const buffers = [];
+		if (isWorking.get === true){
+			return GetCacheEvent.once("cache", cache => {
+				return resolve(cache);
+			});
+		} else{
+			isWorking.get = true;
+			const httpsreq = https.request({
+				method: "get",
+				host: "discord.com",
+				path: `/api/v9/oauth2/applications/${global.config.RPC.clientId}/assets`,
+				port: 443,
+				headers: {
+					authorization: global.config.RPC.token
+				}
+			}, async res => {
+				isWorking.get = false;
+				if (res.statusCode !== 200) return reject(res.statusMessage);
+				const buffers = [];
 
-			for await (const chunk of res) {
-				buffers.push(chunk);
-			}
+				for await (const chunk of res) {
+					buffers.push(chunk);
+				}
 
-			const body = JSON.parse(Buffer.concat(buffers).toString());
-			cache = body;
-			uploaded = uploaded.filter(obj =>
-				body.filter(asset =>
-					asset.id === obj.id
-				).length === 0
-			);
-			return resolve(body);
-		});
-		httpsreq.end();
+				const body = JSON.parse(Buffer.concat(buffers).toString());
+				cache = body;
+				uploaded = uploaded.filter(obj =>
+					body.filter(asset =>
+						asset.id === obj.id
+					).length === 0
+				);
+				GetCacheEvent.emit("cache", body);
+				return resolve(body);
+			});
+			httpsreq.end();
+		}
 	});
 }
 async function hasAsset(name){
@@ -135,7 +148,7 @@ async function deleteDouble(){
 }
 let lastDelete;
 async function autoDelete(){
-	if (!lastDelete
+	if (lastDelete !== undefined
 	|| lastDelete +30000 > Date.now()) return;
 	lastDelete = Date.now();
 	const assets = await getAssets();
@@ -168,16 +181,17 @@ async function autoDelete(){
 
 		}
 		cache = [];
-		getAssets();
-		deleteDouble();
 	}
+	deleteDouble();
 }
-autoDelete();
-setInterval(()=> {
-	cache = [];
-	console.log((new Date()).toLocaleTimeString(), "Updating local cache");
+if(canUpload){
 	autoDelete();
-}, 60000);
+	setInterval(()=> {
+		cache = [];
+		console.log((new Date()).toLocaleTimeString(), "Updating local cache");
+		autoDelete();
+	}, 40000);
+}
 module.exports = {
 	getAssets,
 	hasAsset,

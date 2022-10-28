@@ -38,6 +38,7 @@ module.exports = activityEvent => {
 
 
 		if (state === "ok"){
+			if (act.next) image.getArtistArtwork(act.next);
 			let data = {
 
 				type: 2,
