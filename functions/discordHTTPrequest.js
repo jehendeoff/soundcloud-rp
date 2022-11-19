@@ -149,7 +149,7 @@ async function deleteDouble(){
 let lastDelete;
 async function autoDelete(){
 	if (lastDelete !== undefined
-	|| lastDelete +30000 > Date.now()) return;
+	&& lastDelete +30000 > Date.now()) return;
 	lastDelete = Date.now();
 	const assets = await getAssets();
 	if (assets.length > maxInDiscordAssets){
